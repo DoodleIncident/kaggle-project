@@ -4,9 +4,6 @@ import theano
 import theano.tensor as T
 rng = numpy.random
 
-def sentiment(row):
-    return tuple([float(row[sk]) for sk in s_keys])
-
 tweets = []
 outputs = []
 
@@ -27,4 +24,7 @@ def preprocess():
             wi.writerow(row_in)
             wo.writerow(row_out)
 
-preprocess()
+def load_output():
+    sentiments = numpy.loadtxt(open('pre/output.csv', 'rb'),delimiter=',',skiprows=1)
+
+load_output()
