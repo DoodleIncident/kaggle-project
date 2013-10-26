@@ -4,9 +4,6 @@ import theano
 import theano.tensor as T
 rng = numpy.random
 
-tweets = []
-outputs = []
-
 def preprocess():
     with open('train.csv', 'rb') as tf, open('pre/input.csv', 'wb') as pi, open('pre/output.csv', 'wb') as po:
         r = csv.reader(tf, delimiter=',')
