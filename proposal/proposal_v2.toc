@@ -1,0 +1,6 @@
+\contentsline {section}{\tocsection {}{1}{Problem statement}}{2}{section.1}
+\contentsline {section}{\tocsection {}{2}{Significance}}{2}{section.2}
+\contentsline {section}{\tocsection {}{3}{Related work/Novelty}}{2}{section.3}
+\contentsline {section}{\tocsection {}{4}{Proposed method/approach}}{3}{section.4}
+\contentsline {section}{\tocsection {}{5}{Evaluation}}{3}{section.5}
+\contentsline {section}{\tocsection {}{6}{Data and Resources}}{3}{section.6}
