@@ -9,9 +9,11 @@ def escape_tokens(tweet):
 def tokenized(tweet):
     lowered = tweet.lower()
     escaped = escape_tokens(lowered)
-    stripped = escaped.strip(".,")
-    stemmed = st.stem(stripped)
-    return tokenize.word_tokenize(stemmed)
+    tokenized = tokenize.word_tokenize(escaped)
+    stripped = [t.strip(".,") for t in tokenized]
+    stemmed = [st.stem(s) for s in stripped]
+
+    return stemmed
 
 
 with open('train.csv', 'rb') as tf,\
