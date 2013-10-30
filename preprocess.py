@@ -15,7 +15,6 @@ def tokenized(tweet):
 
     return stemmed
 
-
 with open('train.csv', 'rb') as tf,\
         open('pre/input.csv', 'wb') as pi,\
         open('pre/output.csv', 'wb') as po,\
@@ -40,9 +39,11 @@ with open('train.csv', 'rb') as tf,\
         all_tokens.update(tweet_set)
 
     print tweet_tokens[0:5]
-    print "Because now we know there are", str(len(all_tokens)), "unique tokens in total"
+    print "Because now we know there are ", str(len(all_tokens)), " unique tokens in total"
     
     #for row_in, row_out in zip(pre_input, pre_output):
         #wi.writerow(row_in)
         #wo.writerow(row_out)
+
+# we have a list of tokens as a set (no dups)
 
