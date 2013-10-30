@@ -25,3 +25,7 @@ def load_output():
     sentiments = numpy.loadtxt(open('pre/output.csv', 'rb'),delimiter=',',skiprows=1)
 
 load_output()
+
+# we have a list of tokens as a set (no dups)
+# for each training example find the number of occurences of each token
+# rows are examples and columns are tokens which will be considered as 
