@@ -1,5 +1,4 @@
 import csv
-
 from nltk import tokenize
 from nltk.stem.lancaster import LancasterStemmer
 st = LancasterStemmer()
