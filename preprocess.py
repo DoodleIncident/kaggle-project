@@ -32,17 +32,29 @@ with open('train.csv', 'rb') as tf,\
     # s*, w*, k*
     pre_output = map(lambda row: row[4:], all_fields)
 
-    all_tokens = set()
+    token_set = set()
     tweet_tokens = []
     for s in pre_input:
-        tweet_set = set(tokenized(escape_tokens(s[0])))
-        tweet_tokens.append(tweet_set)
-        all_tokens.update(tweet_set)
+        tweet_list = tokenized(escape_tokens(s[0]))
+        tweet_tokens.append(tweet_list)
+        token_set.update(set(tweet_list))
+
+    all_tokens = list(token_set)
 
     print tweet_tokens[0:5]
-    print "Because now we know there are", str(len(all_tokens)), "unique tokens in total"
-    
-    #for row_in, row_out in zip(pre_input, pre_output):
-        #wi.writerow(row_in)
-        #wo.writerow(row_out)
+    print "Because now we know there are", str(len(token_set)), "unique tokens in total"
+
+    # row are tweets, cols are tokens
+    pre_tokens = []
+    pre_tokens.append(all_tokens) # Token list as a header
+
+    for tokenized_tweet in tweet_tokens[0:10]:
+        pre_tokens.append([tokenized_tweet.count(token) for token in all_tokens])
+
+    print len(pre_tokens), len(pre_tokens[0])
+
+    for row_in, row_out, row_token in zip(pre_input, pre_output, pre_tokens):
+        wi.writerow(row_in)
+        wo.writerow(row_out)
+        wt.writerow(row_token)
 
