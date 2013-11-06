@@ -1,28 +1,35 @@
 import csv
+
 from nltk import tokenize
 from nltk.stem.lancaster import LancasterStemmer
 st = LancasterStemmer()
+
+import norvig
+
+from collections import defaultdict
 
 def escape_tokens(tweet):
     return tweet.replace("@mention", "AT_MENTION").replace("{link}", "BRACKET_LINK")
 
 def tokenized(tweet):
+    # Hah, these are just thrown away by the spellchecker anyway...
+    #escaped = escape_tokens(tweet)
+
     lowered = tweet.lower()
-    escaped = escape_tokens(lowered)
-    tokenized = tokenize.word_tokenize(escaped)
-    stripped = [t.strip(".,") for t in tokenized]
-    stemmed = [st.stem(s) for s in stripped]
+    tokenized = tokenize.word_tokenize(lowered)
+    spellchecked = [t for t in tokenized if norvig.known([t])]
+    stemmed = [st.stem(s) for s in spellchecked]
 
     return stemmed
 
 with open('train.csv', 'rb') as tf,\
         open('pre/input.csv', 'wb') as pi,\
-        open('pre/output.csv', 'wb') as po,\
-        open('pre/tweets.csv', 'wb') as pt:
+        open('pre/output.csv', 'wb') as po:
+        #open('pre/tweets.csv', 'wb') as pt: # NO. BAD. DO NOT DO THIS THING.
     r = csv.reader(tf, delimiter=',')
     wi = csv.writer(pi, delimiter=',')
     wo = csv.writer(po, delimiter=',')
-    wt = csv.writer(pt, delimiter=',')
+    #wt = csv.writer(pt, delimiter=',')
 
     all_fields = list(r)
 
@@ -34,7 +41,7 @@ with open('train.csv', 'rb') as tf,\
     token_set = set()
     tweet_tokens = []
     for s in pre_input:
-        tweet_list = tokenized(escape_tokens(s[0]))
+        tweet_list = tokenized(s[0])
         tweet_tokens.append(tweet_list)
         token_set.update(set(tweet_list))
 
@@ -47,15 +54,15 @@ with open('train.csv', 'rb') as tf,\
     pre_tokens = []
     pre_tokens.append(all_tokens) # Token list as a header
 
-    for tokenized_tweet in tweet_tokens[0:10]:
-        pre_tokens.append([tokenized_tweet.count(token) for token in all_tokens])
+    for t_tweet in tweet_tokens:
+        freqs = defaultdict(int, {t: t_tweet.count(t) for t in t_tweet})
+        pre_tokens.append([freqs[t] for t in all_tokens])
 
     print len(pre_tokens), len(pre_tokens[0])
 
-    for row_in, row_out, row_token in zip(pre_input, pre_output, pre_tokens):
+    for row_in, row_out in zip(pre_input, pre_output):
         wi.writerow(row_in)
         wo.writerow(row_out)
-        wt.writerow(row_token)
 
 # we have a list of tokens as a set (no dups)
 
