@@ -15,7 +15,6 @@ def tokenized(tweet):
 
     return stemmed
 
-
 with open('train.csv', 'rb') as tf,\
         open('pre/input.csv', 'wb') as pi,\
         open('pre/output.csv', 'wb') as po,\
@@ -57,4 +56,6 @@ with open('train.csv', 'rb') as tf,\
         wi.writerow(row_in)
         wo.writerow(row_out)
         wt.writerow(row_token)
+
+# we have a list of tokens as a set (no dups)
 
