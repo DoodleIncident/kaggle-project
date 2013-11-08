@@ -5,9 +5,9 @@ from nltk.stem.lancaster import LancasterStemmer
 st = LancasterStemmer()
 import norvig
 
-from theano import *
-
 from collections import defaultdict
+
+import numpy
 
 def escape_tokens(tweet):
     return tweet.replace("@mention", "AT_MENTION").replace("{link}", "BRACKET_LINK")

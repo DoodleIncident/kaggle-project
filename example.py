@@ -3,9 +3,23 @@ import theano
 import theano.tensor as T
 rng = numpy.random
 
-N = 400
-feats = 784
-D = (rng.randn(N, feats), rng.randint(size=N, low=0, high=2))
+N = 500
+
+input_tokens = numpy.load("npy/input_tokens.npy")
+tweet_tokens = input_tokens[:N,:]
+test_tokens = input_tokens[N:2*N,:]
+del input_tokens
+
+feats = tweet_tokens.shape[1]
+
+output_layer = numpy.load("npy/output_layer.npy")
+is_cloudy = (output_layer[:N,9] > 0) + 0
+test_is_cloudy = (output_layer[N:2*N,9] > 0) + 0
+del output_layer
+
+D = (tweet_tokens, is_cloudy)
+C = (test_tokens, test_is_cloudy)
+
 training_steps = 10000
 
 x = T.matrix("x")
@@ -36,7 +50,5 @@ for i in range(training_steps):
 #print "target values for D:", D[1]
 #print "prediction on D:", predict(D[0])
 
-num_correct = len(["I" for actual, predicted in zip(D[1], predict(D[0])) if actual == predicted])
+num_correct = len(["I" for actual, predicted in zip(predict(C[0]),C[1]) if actual == predicted])
 print num_correct, '/', N
-
-print D[1] == predict(D[0])

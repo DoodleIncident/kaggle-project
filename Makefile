@@ -1,15 +1,14 @@
 all: train
 
-train: npy/
-	# dummy command, of course
-	ls npy
+train: example.py npy/
+	. venv/bin/activate; python example.py
 
 npy/: build_layers.py pre/
-	mkdir npy/
+	mkdir -p npy/
 	. venv/bin/activate; python build_layers.py
 
 pre/: preprocess.py train.csv
-	mkdir pre/
+	mkdir -p pre/
 	. venv/bin/activate; python preprocess.py
 
 clean:
