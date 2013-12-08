@@ -8,6 +8,9 @@ import norvig
 from collections import defaultdict
 
 import numpy
+import scipy.sparse as sp
+
+import util
 
 def escape_tokens(tweet):
     return tweet.replace("@mention", "AT_MENTION").replace("{link}", "BRACKET_LINK")
@@ -60,4 +63,7 @@ with open('pre/input.csv', 'rb') as pi:
     print input_tokens.shape
     print input_tokens[0]
 
-    numpy.save("npy/input_tokens.npy", input_tokens)
+    sparse_tokens = sp.lil_matrix(input_tokens)
+
+    #numpy.save("npy/input_tokens.npy", input_tokens)
+    util.save_sparse_matrix("npy/input_tokens", sparse_tokens)
