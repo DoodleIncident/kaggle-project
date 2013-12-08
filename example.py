@@ -7,7 +7,7 @@ import util
 
 rng = numpy.random
 
-N = 500
+N = 35000
 
 sparse_tokens = util.load_sparse_matrix("npy/input_tokens.npz").tolil()
 input_tokens = sparse_tokens.todense()
