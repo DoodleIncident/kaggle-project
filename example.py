@@ -2,16 +2,14 @@ import numpy
 import scipy.sparse as sp
 import theano
 import theano.tensor as T
+
+import util
+
 rng = numpy.random
 
 N = 500
 
-def load_sparse_matrix(filename):
-    y=numpy.load(filename)
-    z=sp.coo_matrix((y['data'],(y['row'],y['col'])),shape=y['shape'])
-    return z
-
-sparse_tokens = load_sparse_matrix("npy/input_tokens.npz").tolil()
+sparse_tokens = util.load_sparse_matrix("npy/input_tokens.npz").tolil()
 input_tokens = sparse_tokens.todense()
 tweet_tokens = input_tokens[:N,:]
 test_tokens = input_tokens[N:2*N,:]
