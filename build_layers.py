@@ -10,13 +10,7 @@ from collections import defaultdict
 import numpy
 import scipy.sparse as sp
 
-def save_sparse_matrix(filename,x):
-    x_coo=x.tocoo()
-    row=x_coo.row
-    col=x_coo.col
-    data=x_coo.data
-    shape=x_coo.shape
-    numpy.savez(filename,row=row,col=col,data=data,shape=shape)
+import util
 
 def escape_tokens(tweet):
     return tweet.replace("@mention", "AT_MENTION").replace("{link}", "BRACKET_LINK")
@@ -72,4 +66,4 @@ with open('pre/input.csv', 'rb') as pi:
     sparse_tokens = sp.lil_matrix(input_tokens)
 
     #numpy.save("npy/input_tokens.npy", input_tokens)
-    save_sparse_matrix("npy/input_tokens", sparse_tokens)
+    util.save_sparse_matrix("npy/input_tokens", sparse_tokens)
