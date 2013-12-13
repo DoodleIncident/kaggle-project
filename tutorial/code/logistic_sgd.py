@@ -119,7 +119,7 @@ class LogisticRegression(object):
         # LP[n-1,y[n-1]]] and T.mean(LP[T.arange(y.shape[0]),y]) is
         # the mean (across minibatch examples) of the elements in v,
         # i.e., the mean log-likelihood across the minibatch.
-        return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
+        return -T.mean(T.log(1 - abs(y - self.p_y_given_x)))
 
     def errors(self, y):
         """Return a float representing the number of errors in the minibatch
@@ -130,18 +130,27 @@ class LogisticRegression(object):
         :param y: corresponds to a vector that gives for each example the
                   correct label
         """
-
-        # check if y has same dimension of y_pred
-        if y.ndim != self.y_pred.ndim:
-            raise TypeError('y should have the same shape as self.y_pred',
-                ('y', target.type, 'y_pred', self.y_pred.type))
-        # check if y is of the correct datatype
-        if y.dtype.startswith('int'):
-            # the T.neq operator returns a vector of 0s and 1s, where 1
-            # represents a mistake in prediction
-            return T.mean(T.neq(self.y_pred, y))
+        
+        # fuck flexibility
+        if y.ndim == self.y_pred.ndim:
+            # return T.mean(T.neq(self.y_pred, y))
+            raise NotImplementedError() # haha fuck you
+        elif y.ndim == self.p_y_given_x.ndim:
+            return T.mean(abs(y - self.p_y_given_x))
         else:
             raise NotImplementedError()
+
+        ## check if y has same dimension of y_pred
+        #if y.ndim != self.y_pred.ndim:
+            #raise TypeError('y should have the same shape as self.y_pred',
+                #('y', target.type, 'y_pred', self.y_pred.type))
+        ## check if y is of the correct datatype
+        #if y.dtype.startswith('int'):
+            ## the T.neq operator returns a vector of 0s and 1s, where 1
+            ## represents a mistake in prediction
+            #return T.mean(T.neq(self.y_pred, y))
+        #else:
+            #raise NotImplementedError()
 
 
 def load_data(dataset):
@@ -192,12 +201,20 @@ def load_data(dataset):
         variable) would lead to a large decrease in performance.
         """
         data_x, data_y = data_xy
+
+        list_y = list(data_y)
+        prob = [[0]*10 for i in list_y]
+        for i,label in enumerate(list_y):
+            prob[i][label] = 1
+        data_y = numpy.array(prob)
+
         shared_x = theano.shared(numpy.asarray(data_x,
                                                dtype=theano.config.floatX),
                                  borrow=borrow)
         shared_y = theano.shared(numpy.asarray(data_y,
                                                dtype=theano.config.floatX),
                                  borrow=borrow)
+
         # When storing data on the GPU it has to be stored as floats
         # therefore we will store the labels as ``floatX`` as well
         # (``shared_y`` does exactly that). But during our computations
@@ -205,7 +222,7 @@ def load_data(dataset):
         # floats it doesn't make sense) therefore instead of returning
         # ``shared_y`` we will have to cast it to int. This little hack
         # lets ous get around this issue
-        return shared_x, T.cast(shared_y, 'int32')
+        return shared_x, shared_y
 
     test_set_x, test_set_y = shared_dataset(test_set)
     valid_set_x, valid_set_y = shared_dataset(valid_set)
@@ -256,8 +273,7 @@ def sgd_optimization_mnist(learning_rate=0.13, n_epochs=1000,
     # allocate symbolic variables for the data
     index = T.lscalar()  # index to a [mini]batch
     x = T.matrix('x')  # the data is presented as rasterized images
-    y = T.ivector('y')  # the labels are presented as 1D vector of
-                           # [int] labels
+    y = T.matrix('y')  # normalized probabilities
 
     # construct the logistic regression class
     # Each MNIST image has size 28*28
