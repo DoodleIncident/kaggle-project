@@ -214,6 +214,10 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     n_valid_batches = valid_set_x.get_value(borrow=True).shape[0] / batch_size
     n_test_batches = test_set_x.get_value(borrow=True).shape[0] / batch_size
 
+    # the actual fucking shape
+    n_x = train_set_x.get_value(borrow=True).shape[1]
+    n_y = train_set_y.shape[0]
+
     ######################
     # BUILD ACTUAL MODEL #
     ######################
@@ -228,8 +232,8 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     rng = numpy.random.RandomState(1234)
 
     # construct the MLP class
-    classifier = MLP(rng=rng, input=x, n_in=28 * 28,
-                     n_hidden=n_hidden, n_out=10)
+    classifier = MLP(rng=rng, input=x, n_in=n_x,
+                     n_hidden=n_hidden, n_out=n_y)
 
     # the cost we minimize during training is the negative log likelihood of
     # the model plus the regularization terms (L1 and L2); cost is expressed
