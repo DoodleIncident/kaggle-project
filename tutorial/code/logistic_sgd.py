@@ -46,6 +46,7 @@ import numpy
 import theano
 import theano.tensor as T
 
+import theano.printing as printing
 
 class LogisticRegression(object):
     """Multi-class Logistic Regression Class
@@ -119,9 +120,9 @@ class LogisticRegression(object):
         # LP[n-1,y[n-1]]] and T.mean(LP[T.arange(y.shape[0]),y]) is
         # the mean (across minibatch examples) of the elements in v,
         # i.e., the mean log-likelihood across the minibatch.
-        return -T.mean(T.log(1 - abs(y - self.p_y_given_x)))
+        return -T.mean(T.log(T.sum(self.p_y_given_x * y, axis=1)))
 
-    def errors(self, y):
+    def class_error(self, y):
         """Return a float representing the number of errors in the minibatch
         over the total number of examples of the minibatch ; zero one
         loss over the size of the minibatch
@@ -131,14 +132,12 @@ class LogisticRegression(object):
                   correct label
         """
         
-        # fuck flexibility
-        if y.ndim == self.y_pred.ndim:
-            # return T.mean(T.neq(self.y_pred, y))
-            raise NotImplementedError() # haha fuck you
-        elif y.ndim == self.p_y_given_x.ndim:
-            return T.mean(abs(y - self.p_y_given_x))
-        else:
-            raise NotImplementedError()
+        p = printing.Print("errors_print")
+        return T.mean(T.max(abs(y - self.p_y_given_x), axis=1))
+
+    def prob_error(self, y):
+        return T.mean(1 - y[T.arange(y.shape[0]),self.y_pred])
+        #return T.mean(1 - y[self.y_pred])
 
         ## check if y has same dimension of y_pred
         #if y.ndim != self.y_pred.ndim:
@@ -286,13 +285,19 @@ def sgd_optimization_mnist(learning_rate=0.13, n_epochs=1000,
     # compiling a Theano function that computes the mistakes that are made by
     # the model on a minibatch
     test_model = theano.function(inputs=[index],
-            outputs=classifier.errors(y),
+            outputs=classifier.class_error(y),
+            givens={
+                x: test_set_x[index * batch_size: (index + 1) * batch_size],
+                y: test_set_y[index * batch_size: (index + 1) * batch_size]})
+
+    class_model = theano.function(inputs=[index], on_unused_input='ignore',
+            outputs=classifier.prob_error(y),
             givens={
                 x: test_set_x[index * batch_size: (index + 1) * batch_size],
                 y: test_set_y[index * batch_size: (index + 1) * batch_size]})
 
     validate_model = theano.function(inputs=[index],
-            outputs=classifier.errors(y),
+            outputs=classifier.class_error(y),
             givens={
                 x: valid_set_x[index * batch_size:(index + 1) * batch_size],
                 y: valid_set_y[index * batch_size:(index + 1) * batch_size]})
@@ -335,6 +340,7 @@ def sgd_optimization_mnist(learning_rate=0.13, n_epochs=1000,
     best_params = None
     best_validation_loss = numpy.inf
     test_score = 0.
+    class_score = 0.
     start_time = time.clock()
 
     done_looping = False
@@ -369,12 +375,19 @@ def sgd_optimization_mnist(learning_rate=0.13, n_epochs=1000,
 
                     test_losses = [test_model(i)
                                    for i in xrange(n_test_batches)]
+                    class_losses = [class_model(i)
+                                   for i in xrange(n_test_batches)]
                     test_score = numpy.mean(test_losses)
+                    class_score = numpy.mean(class_losses)
 
                     print(('     epoch %i, minibatch %i/%i, test error of best'
                        ' model %f %%') %
                         (epoch, minibatch_index + 1, n_train_batches,
                          test_score * 100.))
+                    print(('     epoch %i, minibatch %i/%i, classification error of best'
+                       ' model %f %%') %
+                        (epoch, minibatch_index + 1, n_train_batches,
+                         class_score * 100.))
 
             if patience <= iter:
                 done_looping = True
