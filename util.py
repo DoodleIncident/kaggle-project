@@ -14,3 +14,14 @@ def load_sparse_matrix(filename):
     z=sp.coo_matrix((y['data'],(y['row'],y['col'])),shape=y['shape'])
     return z
 
+def sparser(flurp):
+    herp = []
+    for i in flurp:
+        derp = []
+        for idx,val in enumerate(i):
+            if val > 0:
+                derp.append(idx)
+        herp.append(derp)
+    return herp
+
+def compute_error():
