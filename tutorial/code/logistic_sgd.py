@@ -122,20 +122,10 @@ class LogisticRegression(object):
         # i.e., the mean log-likelihood across the minibatch.
         return -T.mean(T.log(T.sum(self.p_y_given_x * y, axis=1)))
 
-    def class_error(self, y):
-        """Return a float representing the number of errors in the minibatch
-        over the total number of examples of the minibatch ; zero one
-        loss over the size of the minibatch
-
-        :type y: theano.tensor.TensorType
-        :param y: corresponds to a vector that gives for each example the
-                  correct label
-        """
-        
-        p = printing.Print("errors_print")
-        return T.mean(T.max(abs(y - self.p_y_given_x), axis=1))
-
     def prob_error(self, y):
+        return T.mean(T.mean(abs(y - self.p_y_given_x), axis=1))
+
+    def class_error(self, y):
         return T.mean(1 - y[T.arange(y.shape[0]),self.y_pred])
         #return T.mean(1 - y[self.y_pred])
 
@@ -268,6 +258,7 @@ def sgd_optimization_mnist(learning_rate=0.13, n_epochs=1000,
     n_x = train_set_x.get_value(borrow=True).shape[1]
     n_y = train_set_y.shape[1].eval()
     print n_x, n_y
+    print train_set_y.dtype
 
     ######################
     # BUILD ACTUAL MODEL #
@@ -290,19 +281,19 @@ def sgd_optimization_mnist(learning_rate=0.13, n_epochs=1000,
     # compiling a Theano function that computes the mistakes that are made by
     # the model on a minibatch
     test_model = theano.function(inputs=[index],
-            outputs=classifier.class_error(y),
-            givens={
-                x: test_set_x[index * batch_size: (index + 1) * batch_size],
-                y: test_set_y[index * batch_size: (index + 1) * batch_size]})
-
-    class_model = theano.function(inputs=[index], on_unused_input='ignore',
             outputs=classifier.prob_error(y),
             givens={
                 x: test_set_x[index * batch_size: (index + 1) * batch_size],
                 y: test_set_y[index * batch_size: (index + 1) * batch_size]})
 
-    validate_model = theano.function(inputs=[index],
+    class_model = theano.function(inputs=[index], on_unused_input='ignore',
             outputs=classifier.class_error(y),
+            givens={
+                x: test_set_x[index * batch_size: (index + 1) * batch_size],
+                y: test_set_y[index * batch_size: (index + 1) * batch_size]})
+
+    validate_model = theano.function(inputs=[index],
+            outputs=classifier.prob_error(y),
             givens={
                 x: valid_set_x[index * batch_size:(index + 1) * batch_size],
                 y: valid_set_y[index * batch_size:(index + 1) * batch_size]})

@@ -1,4 +1,4 @@
-from tutorial.code import mlp
+from tutorial.code import mlp, logistic_sgd
 
 import util
 import numpy
@@ -13,7 +13,7 @@ def shared_dataset(data_xy, borrow=True):
     shared_y = theano.shared(numpy.asarray(data_y,
                                             dtype=theano.config.floatX),
                                 borrow=borrow)
-    return shared_x, T.cast(shared_y, 'int32')
+    return shared_x, shared_y
 
 def load_tweets(dataset):
     TRAIN_N = 50000
@@ -21,7 +21,7 @@ def load_tweets(dataset):
     # test on the rest
     
     input_layer = util.load_sparse_matrix("npy/input_tokens.npz").todense()
-    output_layer = numpy.load("npy/output_layer.npy")
+    output_layer = numpy.load("npy/sentiment_layer.npy")
 
     train_set = input_layer[:TRAIN_N], output_layer[:TRAIN_N]
     valid_set = input_layer[TRAIN_N:VALID_N], output_layer[TRAIN_N:VALID_N]
@@ -31,3 +31,5 @@ def load_tweets(dataset):
            ,shared_dataset(valid_set)
            ,shared_dataset(test_set)]
 
+if __name__ == '__main__':
+    mlp.test_mlp(load_data = load_tweets)

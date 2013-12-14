@@ -18,8 +18,9 @@ with open('train.csv', 'rb') as tf:
 
     corpus = [c[0] for c in pre_input]
 
-    vectorizer = CountVectorizer(min_df=1600, max_df=64000)
+    vectorizer = CountVectorizer(min_df=800, max_df=4000)
     X = vectorizer.fit_transform(corpus)
+    print X.shape
 
     util.save_sparse_matrix('npy/input_tokens', X)
     numpy.save("npy/sentiment_layer.npy", numpy.array(pre_sentiment[1:],float))
