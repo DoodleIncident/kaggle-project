@@ -166,7 +166,7 @@ class MLP(object):
         # logistic regression layer
         self.negative_log_likelihood = self.logRegressionLayer.negative_log_likelihood
         # same holds for the function computing the number of errors
-        self.errors = self.logRegressionLayer.errors
+        self.errors = self.logRegressionLayer.prob_error
 
         # the parameters of the model are the parameters of the two layer it is
         # made out of
@@ -216,7 +216,7 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
 
     # the actual fucking shape
     n_x = train_set_x.get_value(borrow=True).shape[1]
-    n_y = train_set_y.shape[0]
+    n_y = train_set_y.shape[1].eval()
 
     ######################
     # BUILD ACTUAL MODEL #
@@ -226,7 +226,7 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     # allocate symbolic variables for the data
     index = T.lscalar()  # index to a [mini]batch
     x = T.matrix('x')  # the data is presented as rasterized images
-    y = T.ivector('y')  # the labels are presented as 1D vector of
+    y = T.matrix('y')  # the labels are presented as 1D vector of
                         # [int] labels
 
     rng = numpy.random.RandomState(1234)

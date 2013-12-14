@@ -234,7 +234,7 @@ def load_data(dataset):
 
 def sgd_optimization_mnist(learning_rate=0.13, n_epochs=1000,
                            dataset='mnist.pkl.gz',
-                           batch_size=600):
+                           batch_size=600, load_data=load_data):
     """
     Demonstrate stochastic gradient descent optimization of a log-linear
     model
@@ -264,6 +264,11 @@ def sgd_optimization_mnist(learning_rate=0.13, n_epochs=1000,
     n_valid_batches = valid_set_x.get_value(borrow=True).shape[0] / batch_size
     n_test_batches = test_set_x.get_value(borrow=True).shape[0] / batch_size
 
+    # the actual fucking shape
+    n_x = train_set_x.get_value(borrow=True).shape[1]
+    n_y = train_set_y.shape[1].eval()
+    print n_x, n_y
+
     ######################
     # BUILD ACTUAL MODEL #
     ######################
@@ -276,7 +281,7 @@ def sgd_optimization_mnist(learning_rate=0.13, n_epochs=1000,
 
     # construct the logistic regression class
     # Each MNIST image has size 28*28
-    classifier = LogisticRegression(input=x, n_in=28 * 28, n_out=10)
+    classifier = LogisticRegression(input=x, n_in=n_x, n_out=n_y)
 
     # the cost we minimize during training is the negative log likelihood of
     # the model in symbolic format
