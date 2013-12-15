@@ -120,10 +120,12 @@ class LogisticRegression(object):
         # LP[n-1,y[n-1]]] and T.mean(LP[T.arange(y.shape[0]),y]) is
         # the mean (across minibatch examples) of the elements in v,
         # i.e., the mean log-likelihood across the minibatch.
+
+        #return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), T.argmax(y, axis=1)])
         return -T.mean(T.log(T.sum(self.p_y_given_x * y, axis=1)))
 
     def prob_error(self, y):
-        return T.mean(T.mean(abs(y - self.p_y_given_x), axis=1))
+        return T.mean(T.mean(abs(y - self.p_y_given_x)**2, axis=1))
 
     def class_error(self, y):
         return T.mean(1 - y[T.arange(y.shape[0]),self.y_pred])

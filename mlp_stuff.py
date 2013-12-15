@@ -1,4 +1,4 @@
-from tutorial.code import mlp, logistic_sgd
+from tutorial.code import mlp, logistic_sgd, old_log
 
 import util
 import numpy
@@ -7,12 +7,17 @@ import theano.tensor as T
 
 def shared_dataset(data_xy, borrow=True):
     data_x, data_y = data_xy
+
+    #data_y = data_y.argmax(axis=1)
+    #print data_y
+
     shared_x = theano.shared(numpy.asarray(data_x,
                                             dtype=theano.config.floatX),
                                 borrow=borrow)
     shared_y = theano.shared(numpy.asarray(data_y,
                                             dtype=theano.config.floatX),
                                 borrow=borrow)
+    #return shared_x, T.cast(shared_y, 'int32')
     return shared_x, shared_y
 
 def load_tweets(dataset):
