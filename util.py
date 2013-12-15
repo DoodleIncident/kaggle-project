@@ -54,7 +54,7 @@ def list_of_tuples_to_2d_list(flurp):
         herp.append(derp)
     return herp
 
-def compute_kind_error(a,b,c):
+def compute_error(a,b,c):
     acc = 0
     for i,j in zip(a,b):
         for k in range(0,c):
