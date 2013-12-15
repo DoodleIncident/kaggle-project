@@ -18,7 +18,7 @@ with open('train.csv', 'rb') as tf:
 
     corpus = [c[0] for c in pre_input]
 
-    vectorizer = CountVectorizer(min_df=400)
+    vectorizer = CountVectorizer(min_df=100)
     X = vectorizer.fit_transform(corpus)
 
     print "First everything:", all_fields[0]

@@ -37,4 +37,5 @@ def load_tweets(dataset):
            ,shared_dataset(test_set)]
 
 if __name__ == '__main__':
+    #logistic_sgd.sgd_optimization_mnist(load_data=load_tweets)
     mlp.test_mlp(load_data = load_tweets)
