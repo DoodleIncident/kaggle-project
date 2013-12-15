@@ -24,6 +24,18 @@ def sparser(flurp):
         herp.append(derp)
     return herp
 
+def denser(flurp,a):
+    herp = []
+    for i in flurp:
+        derp = []
+        for j in range(0,a):
+            if j in i:
+                derp.append(1)
+            else:
+                derp.append(0)
+        herp.append(derp)
+    return herp
+
 def list_of_tuples_to_tuple_of_lists(flurp):
     herp = ()
     for i in flurp:
@@ -42,10 +54,10 @@ def list_of_tuples_to_2d_list(flurp):
         herp.append(derp)
     return herp
 
-def compute_kind_error(a,b):
+def compute_kind_error(a,b,c):
     acc = 0
     for i,j in zip(a,b):
-        for k in range(0,14):
+        for k in range(0,c):
             if k in i and k in j:
                 acc += 1
             if k not in i and k not in j:

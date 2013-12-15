@@ -34,6 +34,8 @@ predicted = classifier.predict(test_docs)
 #for item, labels in zip(test_docs, predicted):
     #print '%s => %s' % (item, ', '.join(target_names[x] for x in labels))
 predicted = util.list_of_tuples_to_2d_list(predicted)
-accuracy = util.compute_kind_error(test_labels, predicted)
+accuracy = util.compute_kind_error(test_labels, predicted, 15)
 accuracy = (100*accuracy) / (15*n)
+predicted = np.array(util.denser(predicted, 15))
 print accuracy
+print predicted.shape
