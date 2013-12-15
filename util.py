@@ -54,7 +54,7 @@ def list_of_tuples_to_2d_list(flurp):
         herp.append(derp)
     return herp
 
-def compute_error(a,b,c):
+def compute_bin_error(a,b,c):
     acc = 0
     for i,j in zip(a,b):
         for k in range(0,c):
@@ -63,3 +63,10 @@ def compute_error(a,b,c):
             if k not in i and k not in j:
                 acc += 1
     return acc
+
+def compute_error(a,b):
+    err = 0
+    for i,j in zip(a,b):
+        for x,y in zip(i,j):
+            err += (y-x)**2
+    return err
