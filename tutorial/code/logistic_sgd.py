@@ -134,7 +134,7 @@ class LogisticRegression(object):
         return self.p_y_given_x
 
     def prob_error(self, y):
-        return T.mean(T.mean(abs(y - self.p_y_given_x)**2, axis=1))
+        return T.sqrt(T.sum(T.sum(abs(y - self.p_y_given_x)**2, axis=1)) / (y.shape[1]*y.shape[0]))
 
     def class_error(self, y):
         return T.mean(1 - y[T.arange(y.shape[0]),self.y_pred])
