@@ -1,6 +1,11 @@
-all: train
+all: predict
 
-train: train.py npy/input_tokens.npz
+predict: predict.py mdl/sentiments.save
+	mkdir -p out/
+	. venv/bin/activate; python predict.py
+
+mdl/sentiments.save: train.py npy/input_tokens.npz
+	mkdir -p mdl/
 	. venv/bin/activate; python train.py
 
 npy/input_tokens.npz: preprocess.py
