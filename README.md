@@ -9,3 +9,4 @@ Note: if a step doesn't work, try `sudo !!`
 1. `source venv/bin/activate`
 	* every time you work in the project environment
 1. `pip install -r requirements.txt`
+1. `make`
