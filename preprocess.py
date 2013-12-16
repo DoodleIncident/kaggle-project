@@ -4,24 +4,28 @@ from sklearn.feature_extraction.text import CountVectorizer
 import numpy
 import util
 
-with open('train.csv', 'rb') as tf:
-    r = csv.reader(tf, delimiter=',')
+with open('train.csv', 'rb') as tr, open('test.csv', 'rb') as te:
+    r1 = csv.reader(tr, delimiter=',')
+    r2 = csv.reader(te, delimiter=',')
     # wi = csv.writer(pi, delimiter=',')
     # wo = csv.writer(po, delimiter=',')
 
-    all_fields = list(r)[1:]
+    train_fields = list(r1)[1:]
+    test_fields = list(r2)[1:]
 
-    pre_input = map(lambda row: [row[1]], all_fields)
-    pre_sentiment = map(lambda row: row[4:9], all_fields)
-    pre_when = map(lambda row: row[9:13], all_fields)
-    pre_weather = map(lambda row: row[13:], all_fields)
+    pre_input = map(lambda row: [row[1]], train_fields)
+    pre_sentiment = map(lambda row: row[4:9], train_fields)
+    pre_when = map(lambda row: row[9:13], train_fields)
+    pre_weather = map(lambda row: row[13:], train_fields)
 
-    corpus = [c[0] for c in pre_input]
+    train_corpus = [c[0] for c in pre_input]
+    test_corpus = [c[1] for c in test_fields]
 
     vectorizer = CountVectorizer(min_df=100)
-    X = vectorizer.fit_transform(corpus)
+    X = vectorizer.fit_transform(train_corpus)
+    Y = vectorizer.transform(test_corpus)
 
-    print "First everything:", all_fields[0]
+    print "First everything:", train_fields[0]
     print "First tweet:", pre_input[0]
     print "First sentiment:", pre_sentiment[0]
     print "First when:", pre_when[0]
@@ -31,6 +35,9 @@ with open('train.csv', 'rb') as tf:
     #print vectorizer.get_feature_names()
 
     util.save_sparse_matrix('npy/input_tokens', X)
-    numpy.save("npy/sentiment_layer.npy", numpy.array(pre_sentiment,float))
-    numpy.save("npy/when_layer.npy", numpy.array(pre_when,float))
-    numpy.save("npy/weather_layer.npy", numpy.array(pre_weather,float))
+    util.save_sparse_matrix('npy/test_tokens', Y)
+
+    numpy.save("npy/sentiments_layer.npy", numpy.array(pre_sentiment,float))
+    numpy.save("npy/whens_layer.npy", numpy.array(pre_when,float))
+    # I guess I'm not doing anything really with this
+    #numpy.save("npy/weather_layer.npy", numpy.array(pre_weather,float))

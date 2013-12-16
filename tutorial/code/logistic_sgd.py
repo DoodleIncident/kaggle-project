@@ -57,7 +57,7 @@ class LogisticRegression(object):
     determine a class membership probability.
     """
 
-    def __init__(self, input, n_in, n_out):
+    def __init__(self, input, n_in, n_out, W=None, b=None):
         """ Initialize the parameters of the logistic regression
 
         :type input: theano.tensor.TensorType
@@ -75,11 +75,17 @@ class LogisticRegression(object):
         """
 
         # initialize with 0 the weights W as a matrix of shape (n_in, n_out)
-        self.W = theano.shared(value=numpy.zeros((n_in, n_out),
+        if W:
+            self.W = W
+        else:
+            self.W = theano.shared(value=numpy.zeros((n_in, n_out),
                                                  dtype=theano.config.floatX),
                                 name='W', borrow=True)
         # initialize the baises b as a vector of n_out 0s
-        self.b = theano.shared(value=numpy.zeros((n_out,),
+        if b:
+            self.b = b
+        else:
+            self.b = theano.shared(value=numpy.zeros((n_out,),
                                                  dtype=theano.config.floatX),
                                name='b', borrow=True)
 
@@ -123,6 +129,9 @@ class LogisticRegression(object):
 
         #return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), T.argmax(y, axis=1)])
         return -T.mean(T.log(T.sum(self.p_y_given_x * y, axis=1)))
+
+    def predict(self):
+        return self.p_y_given_x
 
     def prob_error(self, y):
         return T.mean(T.mean(abs(y - self.p_y_given_x)**2, axis=1))

@@ -113,7 +113,7 @@ class MLP(object):
     class).
     """
 
-    def __init__(self, rng, input, n_in, n_hidden, n_out):
+    def __init__(self, rng, input, n_in, n_hidden, n_out, params=None):
         """Initialize the parameters for the multilayer perceptron
 
         :type rng: numpy.random.RandomState
@@ -136,20 +136,26 @@ class MLP(object):
 
         """
 
+        if params:
+            W_1, b_1, W_2, b_2 = params
+        else:
+            W_1, b_1, W_2, b_2 = [None]*4
+
         # Since we are dealing with a one hidden layer MLP, this will
         # translate into a TanhLayer connected to the LogisticRegression
         # layer; this can be replaced by a SigmoidalLayer, or a layer
         # implementing any other nonlinearity
         self.hiddenLayer = HiddenLayer(rng=rng, input=input,
                                        n_in=n_in, n_out=n_hidden,
-                                       activation=T.tanh)
+                                       activation=T.tanh, W=W_1, b=b_1)
 
         # The logistic regression layer gets as input the hidden units
         # of the hidden layer
         self.logRegressionLayer = LogisticRegression(
             input=self.hiddenLayer.output,
             n_in=n_hidden,
-            n_out=n_out)
+            n_out=n_out,
+            W=W_2, b=b_2)
 
         # L1 norm ; one regularization option is to enforce L1 norm to
         # be small
@@ -167,6 +173,9 @@ class MLP(object):
         self.negative_log_likelihood = self.logRegressionLayer.negative_log_likelihood
         # same holds for the function computing the number of errors
         self.errors = self.logRegressionLayer.prob_error
+
+        # what the fuck am I doing
+        self.predict = self.logRegressionLayer.predict
 
         # the parameters of the model are the parameters of the two layer it is
         # made out of
@@ -357,6 +366,10 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     print >> sys.stderr, ('The code for file ' +
                           os.path.split(__file__)[1] +
                           ' ran for %.2fm' % ((end_time - start_time) / 60.))
+
+    f = file('mdl/'+dataset+'.save', 'wb')
+    cPickle.dump(classifier.params, f, protocol=cPickle.HIGHEST_PROTOCOL)
+    f.close
 
 
 if __name__ == '__main__':
