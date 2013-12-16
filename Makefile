@@ -20,4 +20,4 @@ npy/input_tokens.npz: preprocess.py
 	. venv/bin/activate; python preprocess.py
 
 clean:
-	rm -rf pre/ npy/
+	rm -rf npy/ mdl/ out/
