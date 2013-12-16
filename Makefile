@@ -1,6 +1,13 @@
-all: predict
+all: out/output.csv
 
-predict: predict.py mdl/sentiments.save
+out/output.csv: out/kinds.csv out/sentiments.csv
+	. venv/bin/activate; python lilo.py
+
+out/kinds.csv: multilabel.py
+	mkdir -p out/
+	. venv/bin/activate; python multilabel.py
+
+out/sentiments.csv: predict.py mdl/sentiments.save
 	mkdir -p out/
 	. venv/bin/activate; python predict.py
 
