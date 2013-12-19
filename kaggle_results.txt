@@ -1,16 +1,25 @@
-multilabel
+multilabel (complete binary)
 0.20554
 190.5
 
-0.5 cutoff
+multilabel (0.5 cutoff)
 0.18482
 175.5
 
-linear regression
+linear regression (abs(x))
 0.18269
 170.5
 
-k-fold hack
+multilabel (0.5 cutoff)
 bootstrap
 0.18777
 177.5
+
+linear regression (negative to 0)
+bootstrap
+0.18692
+177.5
+
+linear regression (negative to 0)
+0.18217
+168.5

@@ -42,7 +42,7 @@ for idx in range(0,15):
 	lin_reg.fit(train_docs, train_labels[:,idx])
 	predicted = lin_reg.predict(test_docs)
 
-	predicted = np.array([fabs(x) for x in predicted])
+	predicted = np.array([(x+fabs(x))/2 for x in predicted])
 	A = np.c_[ A, predicted ]
 
 A = np.array(A[:,1:])

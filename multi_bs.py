@@ -25,10 +25,6 @@ open('test.csv', 'rb') as test:
 A = np.zeros((len(test_input), 15))
 offset = 10000
 for idx in range(0,len(corpus)/offset):
-    # print idx
-    # print len(corpus)/offset
-    # print idx*offset
-    # print offset
     train_docs = corpus
     train_labels = util.sparser(labels)
     test_docs = test_input

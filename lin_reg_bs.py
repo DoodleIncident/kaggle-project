@@ -24,26 +24,32 @@ open('test.csv', 'rb') as test:
     test_input = np.array([c[0] for c in test_input[1:]])
 
 A = np.ones(len(test_input))
-train_docs = corpus
-train_labels = np.array(labels)
-test_docs = test_input
-
-vect = CountVectorizer(min_df=100)
-tfidf = TfidfTransformer()
-
-train_docs = vect.fit_transform(train_docs)
-train_docs = tfidf.fit_transform(train_docs)
-
-test_docs = vect.transform(test_docs)
-test_docs = tfidf.transform(test_docs)
-
+offset = 10000
 for idx in range(0,15):
-	lin_reg = LinearRegression()
-	lin_reg.fit(train_docs, train_labels[:,idx])
-	predicted = lin_reg.predict(test_docs)
+    B = np.zeros(len(test_input))
+    for jdx in range(0,len(corpus)/offset):
+        train_docs = corpus
+        train_labels = np.array(labels)
+        test_docs = test_input
 
-	predicted = np.array([fabs(x) for x in predicted])
-	A = np.c_[ A, predicted ]
+        vect = CountVectorizer(min_df=100)
+        tfidf = TfidfTransformer()
+        lin_reg = LinearRegression()
+
+        train_docs = vect.fit_transform(train_docs[jdx*offset:jdx*offset+offset])
+        train_docs = tfidf.fit_transform(train_docs)
+        tl = train_labels[:,idx]
+        lin_reg.fit(train_docs, tl[jdx*offset:jdx*offset+offset])
+
+        test_docs = vect.transform(test_docs)
+        test_docs = tfidf.transform(test_docs)
+    	predicted = lin_reg.predict(test_docs)
+
+    	predicted = np.array([(x+fabs(x))/2 for x in predicted])
+        B += predicted
+
+    B = B/(len(corpus)/offset)
+    A = np.c_[ A, B ]
 
 A = np.array(A[:,1:])
 np.savetxt('out/kinds.csv',A,delimiter=',',fmt='%.3f')
