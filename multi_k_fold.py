@@ -21,22 +21,36 @@ open('test.csv', 'rb') as test:
     test_input = map(lambda row: [row[1]], all_fields)
     test_input = np.array([c[0] for c in test_input[1:]])
 
-train_docs = corpus
-train_labels = util.sparser(labels)
-test_docs = test_input
 
-vect = CountVectorizer(min_df=100)
-tfidf = TfidfTransformer()
-clf = OneVsRestClassifier(LinearSVC())
+A = np.zeros((len(test_input), 15))
+offset = 10000
+for idx in range(0,len(corpus)/offset):
+    # print idx
+    # print len(corpus)/offset
+    # print idx*offset
+    # print offset
+    train_docs = corpus
+    train_labels = util.sparser(labels)
+    test_docs = test_input
 
-train_docs = vect.fit_transform(train_docs)
-train_docs = tfidf.fit_transform(train_docs)
-clf.fit(train_docs, train_labels)
+    vect = CountVectorizer(min_df=100)
+    tfidf = TfidfTransformer()
+    clf = OneVsRestClassifier(LinearSVC())
 
-test_docs = vect.transform(test_docs)
-test_docs = tfidf.transform(test_docs)
-predicted = clf.predict(test_docs)
+    train_docs = vect.fit_transform(train_docs[idx*offset:idx*offset+offset])
+    train_docs = tfidf.fit_transform(train_docs)
+    clf.fit(train_docs, train_labels[idx*offset:idx*offset+offset])
 
-predicted = util.list_of_tuples_to_2d_list(predicted)
-predicted = np.array(util.denser(predicted, 15))
-np.savetxt('out/kinds.csv',predicted,delimiter=',',fmt='%.3f')
+    test_docs = vect.transform(test_docs)
+    test_docs = tfidf.transform(test_docs)
+    predicted = clf.predict(test_docs)
+
+    predicted = util.list_of_tuples_to_2d_list(predicted)
+    predicted = np.array(util.denser(predicted, 15))
+    A += predicted
+    #save it and do some avg logic
+
+print A
+print A.shape
+A = A/(len(corpus)/offset)
+np.savetxt('out/kinds.csv',A,delimiter=',',fmt='%.3f')
