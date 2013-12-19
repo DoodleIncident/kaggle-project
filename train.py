@@ -1,4 +1,4 @@
-from tutorial.code import mlp, logistic_sgd, old_log
+from tutorial.code import mlp, logistic_sgd
 
 import util
 import numpy

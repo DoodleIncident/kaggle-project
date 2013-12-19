@@ -19,7 +19,7 @@ def sparser(flurp):
     for i in flurp:
         derp = []
         for idx,val in enumerate(i):
-            if val > 0:
+            if val > 0.5:
                 derp.append(idx)
         herp.append(derp)
     return herp
