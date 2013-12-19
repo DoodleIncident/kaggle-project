@@ -1,5 +1,6 @@
 *.swp
 venv
-pre/*
 *.pyc
+out/*
 npy/*
+mdl/*
