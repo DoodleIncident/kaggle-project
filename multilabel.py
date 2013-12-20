@@ -1,7 +1,6 @@
 import csv
 import util
 import numpy as np
-from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.multiclass import OneVsRestClassifier

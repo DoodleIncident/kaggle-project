@@ -1,11 +1,10 @@
 import csv
 import util
 import numpy as np
-from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.multiclass import OneVsRestClassifier
-from sklearn.svm import LinearSVC
+from sklearn.linear_model import SGDClassifier
 
 with open('train.csv', 'rb') as train,\
 open('test.csv', 'rb') as test:
@@ -31,7 +30,8 @@ for idx in range(0,len(corpus)/offset):
 
     vect = CountVectorizer(min_df=100)
     tfidf = TfidfTransformer()
-    clf = OneVsRestClassifier(LinearSVC())
+    #clf = OneVsRestClassifier(LinearSVC())
+    clf = OneVsRestClassifier(SGDClassifier())
 
     train_docs = vect.fit_transform(train_docs[idx*offset:idx*offset+offset])
     train_docs = tfidf.fit_transform(train_docs)

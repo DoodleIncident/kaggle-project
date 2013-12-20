@@ -1,11 +1,9 @@
 import csv
 import util
 import numpy as np
-from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.multiclass import OneVsRestClassifier
-from sklearn.svm import LinearSVC
 from sklearn.linear_model import SGDClassifier
 
 N = 70000
@@ -28,8 +26,7 @@ test_labels = labels[N:N+n]
 
 vect = CountVectorizer(min_df=100)
 tfidf = TfidfTransformer()
-#clf = OneVsRestClassifier(LinearSVC())
-clf = OneVsRestClassifier(SGDClassifier())
+clf = OneVsRestClassifier(SGDClassifier(loss='perceptron'))
 
 train_docs = vect.fit_transform(train_docs)
 train_docs = tfidf.fit_transform(train_docs)

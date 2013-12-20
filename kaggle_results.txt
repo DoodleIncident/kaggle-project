@@ -10,10 +10,24 @@ linear regression (abs(x))
 0.18269
 170.5
 
+linearsvc
 multilabel (0.5 cutoff)
 bootstrap
 0.18777
 177.5
+
+sgd-linearsvc
+multilabel (0.5 cutoff)
+bootstrap
+0.18818
+177.5
+
+sgd-perceptron
+multilabel (0.5 cutoff)
+bootstrap
+0.18677
+177.5
+
 
 linear regression (negative to 0)
 bootstrap
@@ -22,4 +36,9 @@ bootstrap
 
 linear regression (negative to 0)
 0.18217
+168.5
+
+linear regression (negative to 0)
+charlie's new nn
+.18106
 168.5
