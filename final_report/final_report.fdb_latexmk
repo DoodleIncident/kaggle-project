@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1383870747 "progress_report.tex" "progress_report.pdf" "progress_report" 1383870748
+["pdflatex"] 1387514927 "final_report.tex" "final_report.pdf" "final_report" 1387514928
   "/usr/local/texlive/2013basic/texmf-dist/tex/context/base/supp-pdf.mkii" 1337017135 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/generic/ifxetex/ifxetex.sty" 1284331290 1458 43ab4710dc82f3edeabecd0d099626b2 ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/atbegshi.sty" 1335995445 24460 92f559a71aac869021852c227c704b38 ""
@@ -10,7 +10,6 @@
   "/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/infwarerr.sty" 1335995445 8253 3bdedc8409aa5d290a2339be6f09af03 ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/ltxcmds.sty" 1335995445 18425 775b341047ce304520cc7c11ca41392e ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/article.cls" 1254151887 20571 b8bd218bf2e18b4f5817ee643cd9c515 ""
-  "/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/omscmr.fd" 1254151887 2109 c400bd6c901edc4a09e4d53fcffd3b3c ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/size10.clo" 1254151887 9042 248dfba326a1b8733d6bb8e0a3ac1e49 ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/latex/eso-pic/eso-pic.sty" 1286577940 11442 613b1f42c35ebbd862fd65943e4aa9b2 ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/latex/graphics/keyval.sty" 1156702488 2266 7054435e4584a41cf53b0a7ca624d0cb ""
@@ -26,12 +25,12 @@
   "/usr/local/texlive/2013basic/texmf-dist/tex/latex/pdftex-def/pdftex.def" 1306616590 55368 3c8a0d99822330f2dfabc0dfb09ce897 ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/latex/url/url.sty" 1264379145 21932 e3a9cf32ee9b853b42be14c2f25b873c ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/latex/xcolor/xcolor.sty" 1169481954 55224 a43bab84e0ac5e6efcaf9a98bde73a94 ""
-  "nips13submit_e.sty" 1383870696 8804 cee4cb76ce9b6e282137062c87041468 ""
-  "progress_report.aux" 1383870748 2658 7ae06b1ec15726ca6dda30bad3594bf0 ""
-  "progress_report.out" 1383870748 976 58b3dd4f5ab47817df00134f947a6aca ""
-  "progress_report.tex" 1383870742 18124 0e81c0229bed306c8096762af9fe4029 ""
+  "final_report.aux" 1387514928 1186 44645073414152a23b49d21a5e338419 ""
+  "final_report.out" 1387514928 296 9bad5e96c197b555ff864af269c39218 ""
+  "final_report.tex" 1387514925 14928 d06e81d1f56320b06b1145d21f27e29d ""
+  "nips13submit_e.sty" 1384101154 8804 cee4cb76ce9b6e282137062c87041468 ""
   (generated)
-  "progress_report.log"
-  "progress_report.pdf"
-  "progress_report.out"
-  "progress_report.aux"
+  "final_report.aux"
+  "final_report.pdf"
+  "final_report.out"
+  "final_report.log"

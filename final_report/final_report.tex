@@ -3,7 +3,7 @@
 \usepackage{hyperref}
 \usepackage{url}
 
-\title{EECS 445: Progress Report}
+\title{EECS 445: Final Report}
 
 \author{
 Nand Dalal \\
@@ -30,15 +30,21 @@ University of Michigan \\
 \newcommand{\fix}{\marginpar{FIX}}
 \newcommand{\new}{\marginpar{NEW}}
 
-\nipsfinalcopy
+%\nipsfinalcopy
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-Our team has chosen to solve the 'Partly Sunny with a Chance of Hashtags' challenge hosted by Kaggle. The goal of the challenge is to provide accurate prediction for twenty-four labels associated with tweets related to the weather. According to Kaggle, ``The challenge is to analyze the tweet and determine whether it has a positive, negative, or neutral sentiment, whether the weather occurred in the past, present, or future, and what sort of weather the tweet references.'' Upon successful completion of this project, we will have developed models to approach a large portion of social media data. Thus far, we have been able to tokenize the tweets by applying a stemmer and spell checker. We have also been able to pass this tokenized data to a logistic regression model to predict whether a particular tweet is referencing 'cloudy' weather or not. Preprocessing the data has proven to be the toughest and most important aspect of the challenge. Moving forward, we will be apply more algorithms to tokenize the data such as PCA and sparse coding to reduce the data's dimensionality. Also, we will be applying multilayer perceptrons and GMM in order to predict multiple labels and discover complex relationships between the input features and output.
+Our team has chosen to solve the 'Partly Sunny with a Chance of Hashtags' challenge hosted by Kaggle. The goal of the challenge is to provide accurate prediction for twenty-four labels associated with tweets related to the weather. According to Kaggle, ``The challenge is to analyze the tweet and determine whether it has a positive, negative, or neutral sentiment, whether the weather occurred in the past, present, or future, and what sort of weather the tweet references.''
+
+The primary objective of the competition was to achieve the lowest root mean square error (RMSE).
+
+Upon successful completion of this project, we will have developed models to approach a large portion of social media data. Thus far, we have been able to tokenize the tweets by applying a stemmer and spell checker. We have also been able to pass this tokenized data to a logistic regression model to predict whether a particular tweet is referencing 'cloudy' weather or not. Preprocessing the data has proven to be the toughest and most important aspect of the challenge. Moving forward, we will be apply more algorithms to tokenize the data such as PCA and sparse coding to reduce the data's dimensionality. Also, we will be applying multilayer perceptrons and GMM in order to predict multiple labels and discover complex relationships between the input features and output.
 \end{abstract}
+
+\newpage
 
 \section{Introduction}
 The timeframe and subject matter of the 'Partly Sunny with a Chance of Hashtags' challenge hosted by Kaggle makes it an attractive competition for our team to take part in. The problem is to be solved using the analytics of nearly 80,000 tweets for the prediction of a confidence score for twenty-four labels indicating various sentiments, time, and the weather categories. Our provided training data by CrowdFlower Open Data is an attempt to facilitate the use of large datasets through the creation of labels paired with each data entry for machine learning applications. Through competing in this challenge, we are hoping to generate methods for accurate prediction of scores for data labels derived from a large data set and generalize these machine learning algorithms for other such potential applications. Upon successful completion of this challenge, not only would we have developed algorithms for accurately predicting the sentiment, time, and weather condition given a tweet, but more imporantly we would have achieved the validation of such data organization approach, which can be applied to existing datasets for efficient machine learning applications.
@@ -46,13 +52,37 @@ The timeframe and subject matter of the 'Partly Sunny with a Chance of Hashtags'
 \section{Proposed Method}
 In order to understand the methods being used to solve this classification problem, we will start by examining the data provided by Kaggle.
 
-Kaggle has provided both training and testing data. The testing data has not been labled, and will be used for ranking in the competition. The training data consists of three major items: the raw tweet, locations, and a confidence score corresponding to each of twenty-four labels. The twenty-four labels are further split into three categories: sentiment, when, and kind. The people who rated these tweets were allowed to pick only one label for the sentiment and when categories, but were allowed multiple selections for the kind category. Having a single person rating each tweet introduces a bias, so each tweet has been reviewed by multiple people, who may not agree on the assigned labels for a particular tweet. As a result, the sentiment and when categories' sum of labels will usually be close to one each, however this is not considered in the code since the proposed algorithm should learn this and account for it in the result.
+Kaggle has provided both training and testing data. The testing data has not been labled, and will be used for ranking in the competition. The training data consists of three major items: the raw tweet, locations, and a confidence score corresponding to each of twenty-four labels. The twenty-four labels are further split into three categories: sentiment of the tweet (sentiment), corresponding time period (when), and type of weather (kind). The sentiment and when categories follow probability distributions in that the labels associated with each category add up to one. The kind category however does not follow a probability distribution and can have any confidence score between zero and one inclusive associated with its corresponding labels.
+
+\begin{center}
+    \begin{tabular}{ | l | p{3.7cm} | p{7.3cm} |}
+    \hline
+    Category & Type & Labels \\ \hline
+    Sentiment & Probability Distribution ($\sum labels = 1$) & I can't tell, Negative, Neutral / author is just sharing information, Positive, Tweet not related to weather condition \\ \hline
+    When & Probability Distribution ($\sum labels = 1$) & current (same day) weather, future (forecast), I can't tell, past weather \\ \hline
+    Kind & Confidence Score (each label $\in [0,1]$) & clouds, cold, dry, hot, humid, hurricane, I can't tell, ice, other, rain, snow, storms, sun, tornado, wind \\ \hline
+    \end{tabular}
+\end{center}
+
+The people who rated these tweets were allowed to pick only one label for the sentiment and when categories, but were allowed multiple selections for the kind category. Having a single person rating each tweet introduces a bias, so each tweet has been reviewed by multiple people, who may not agree on the assigned labels for a particular tweet. 
 
 Now that we understand the organization of the data, we can proceed with the proposed method for processing the input.
 
-Feature extraction from the raw tweets is arguably the most imporant part of the project. Upon inspection of the training data, we realized that words in the tweets are often spelt with the intention of a four year old. Also, punctuation and other characters in the tweets often times do not affect the tweet's classification. Therefore, we have started the preprocessing stage by tokenizing each tweet. This involves two major steps. First, we use the NLTK library's Lancaster Stemmer to stem each word. Second, we use Peter Norvig's toy spell checker to check if the word is spelled correctly. However we will attempt to implement a spell corrector, since throwing out all mis-spelt words decreases the potential power given by the data. These two steps in the preprocess have proved to reduce the number of features from a few hundred thousand to just below 7,000.
+Feature extraction from the raw tweets is arguably the most imporant part of the project. Upon inspection of the training data, we realized that words in the tweets are often spelt with the intention of a four year old. Also, punctuation and other characters in the tweets often times do not affect the tweet's classification.
 
-Glancing over the training data, a person is clearly able to discern words in common between different tweets that affect the labeling in a similar fashion. This can be achieved by implementing PCA to further reduce the data's dimensionality followed by sparse coding to learn bases from the raw tweets. This will allow the features to not only be distinct words but rather meaningful phrases and groups of words. This takes care of the input data.
+Initally, we rolled our own preprocessing code. We started the preprocessing stage by tokenizing each tweet. This involved two major steps. First, we used the NLTK library's Lancaster Stemmer to stem each word. Second, we use Peter Norvig's toy spell checker to check if the word is spelled correctly.
+
+These methods resulted in throwing out all mis-spelt words and thus decreasing the potential power given by the data. These two steps in the preprocessing stage proved to reduce the number of features from a few hundred thousand to just under 7,000. However, as discussed in a later section, even 7,000 features proved too computationally complex.
+
+Upon re-evaluation of various feature extraction methods, we decided to make use of Scikit-Learn, a machine learning library for Python. We used Scikit-Learn's feature extraction module to implement a bag of words representation of the tweets. This involved two major steps. First, we vectorized the data which involved tokenizing, counting, and normalizing the tweets. This allowed us to extract key words from all the tweets as well as count the number of occurrences of these extracted words for each tweet. One of the features of the vectorization step is the option to provide a document frequency requirement for the extracted words. We will explore how we chose the values for the minimum and maximum document frequency in a later section. Second we used Tf–idf term weighting to re-weight the count features into floating point values suitable for usage by a classifier. Using these methods from Scikit-Learn's feature extraction module, we were able to decrease our features to around 1,000, achieve significant performance improvements, and decrease the number of lines substantially.
+
+%table for min_df and max_df
+
+After performing feature extraction on our data, we fed our preprocessed data matrix to multiple machine learning algorithms. We used separate algorithms for the sentiments/when labels and the kind labels due to the nature of the distribution. As mentioned previously, sentiments and when labels follow a distribution while kind labels just need to be between zero and one inclusive.
+
+%charlie's stuff here
+
+
 
 Whilst attempting to reduce the data's dimensionality, we will be feeding the resultant data matrix to multiple machine learning algorithms. We will be using the deep learning algorithms already implemented in the Theano library. The Theano tutorials demonstrate the use of logistic regression and a multilayer perceptron. Even though logistic regression does not make too much sense given multiple labels that require classification, we will be using it to familiarize ourselves with the Theano library as well as NumPy, the library for N-dimensional array objects that Theano uses. The multilayer perceptron will be our primary algorithm. Specifically, the input layer will be a set of nodes corresponding to the number of occurences of a certain feature in the training example, and the output layer will be a set of nodes corresponding to the twenty-four labels. In addition, we will attempt to apply GMM to the data to classify what kind of weather the tweets correspond to, as they might be associated with multiple kinds of weather.
 
@@ -101,5 +131,16 @@ From this challenge, we want to demonstrate that it is possible to classify sent
 
 	[8]Anthony K Jose et al., {\it Twitter Sentiment Analysis}
 }
+% @article{scikit-learn,
+%  title={Scikit-learn: Machine Learning in {P}ython},
+%  author={Pedregosa, F. and Varoquaux, G. and Gramfort, A. and Michel, V.
+%          and Thirion, B. and Grisel, O. and Blondel, M. and Prettenhofer, P.
+%          and Weiss, R. and Dubourg, V. and Vanderplas, J. and Passos, A. and
+%          Cournapeau, D. and Brucher, M. and Perrot, M. and Duchesnay, E.},
+%  journal={Journal of Machine Learning Research},
+%  volume={12},
+%  pages={2825--2830},
+%  year={2011}
+% }
 
 \end{document}

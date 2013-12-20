@@ -39,7 +39,7 @@ for idx in range(0,15):
 	test_docs = tfidf.transform(test_docs)
 	predicted = lin_reg.predict(test_docs)
 
-	predicted = [fabs(x) for x in predicted]
+	predicted = [(x+fabs(x))/2 for x in predicted]
 
 	err = 0
 	for i,j in zip(test_labels[:,idx],predicted):
