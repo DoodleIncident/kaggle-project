@@ -1,0 +1,27 @@
+clearly stating the problem, relevant background, your approach, and your evaluation of your approach
+
+Abstract (1 paragraph)
+Section 1. Introduction: Problem description and motivation. Why do you want to solve this problem? What's the impact if you can solve this problem?
+
+Section 2. Proposed method: How are you going to solve this problem? Why should the proposed method work? Provide technical details of your approach if you are proposing a novel method.
+
+Section 3. Related work: What are existing methods? What are the state-of-the-art methods for this problem? How is your approach different from the related work?
+
+Section 4. Experimental results: Milestones achieved so far (add all relevant experimental results). How do these results support your claim?
+
+Section 5. Conclusion: Summary of your results. What have you learned? What’s the biggest contribution of this project?
+References
+
+Project Evaluation:
+
+Presentation:
+Is the problem clearly described? Is the approach and results clearly described? Is the paper easy to understand for general audience? Ideally it should be mostly understandible to your fellow graduate students (who are taking 445). Please consider adding figures or diagrams that explain your approach, which will be very helpful in explaining your approach. Please be careful in Figures and Tables and provide sufficient explanations; please avoid using unnecessary jargons, and your terminology and notations should be clearly defined (i.e., self-contained).
+
+Technical Quality:
+ Is the problem statement clear?  Is the approach reasonable?  Does the proposed method have solid mathematical and algorithmic foundation? Your project will be evaluated highly if you propose a new model and provide a mathematically sound algorithm to solve the formulation.
+
+Novelty:
+Was the idea explored new? In what aspect is the proposed method novel: new algorithm, new theoretical results, new learning model, new application, non-trivial extension of the previous work, etc.?
+
+Significance:
+Did the authors clearly motivate the significance of this research?  Do their evaluations reasonably measure this usefulness (e.g. evaluating on real problems might be more motivating than on small toy problems, identifying strengths and weaknesses, spaces of problems where their approach will excel and spaces of problem where their approach may not excel. Does the evaluation sufficiently prove the authors claims? 

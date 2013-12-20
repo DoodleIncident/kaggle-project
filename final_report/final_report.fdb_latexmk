@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1387534190 "final_report.tex" "final_report.pdf" "final_report" 1387534191
+["pdflatex"] 1387559838 "final_report.tex" "final_report.pdf" "final_report" 1387559839
   "/usr/local/texlive/2013basic/texmf-dist/tex/context/base/supp-pdf.mkii" 1337017135 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/generic/ifxetex/ifxetex.sty" 1284331290 1458 43ab4710dc82f3edeabecd0d099626b2 ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/atbegshi.sty" 1335995445 24460 92f559a71aac869021852c227c704b38 ""
@@ -25,9 +25,9 @@
   "/usr/local/texlive/2013basic/texmf-dist/tex/latex/pdftex-def/pdftex.def" 1306616590 55368 3c8a0d99822330f2dfabc0dfb09ce897 ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/latex/url/url.sty" 1264379145 21932 e3a9cf32ee9b853b42be14c2f25b873c ""
   "/usr/local/texlive/2013basic/texmf-dist/tex/latex/xcolor/xcolor.sty" 1169481954 55224 a43bab84e0ac5e6efcaf9a98bde73a94 ""
-  "final_report.aux" 1387534191 1096 5a9711c9214c922022f1e850c1afb8a8 ""
-  "final_report.out" 1387534191 244 50394ad278b6f5f4fff04194a2dfab30 ""
-  "final_report.tex" 1387534189 17891 513e0f2a8e4f35084e91ea55b1799397 ""
+  "final_report.aux" 1387559839 1096 741bcd7f2d6e8a7b55bc49fc9fdf6568 ""
+  "final_report.out" 1387559839 244 50394ad278b6f5f4fff04194a2dfab30 ""
+  "final_report.tex" 1387559836 21358 65f5d1cf31c6c8f990fcaffb8aed85a7 ""
   "nips13submit_e.sty" 1387517503 8804 cee4cb76ce9b6e282137062c87041468 ""
   (generated)
   "final_report.aux"
