@@ -57,7 +57,7 @@ class LogisticRegression(object):
     determine a class membership probability.
     """
 
-    def __init__(self, input, n_in, n_out, W=None, b=None):
+    def __init__(self, input, n_in, n_out, W=None, b=None, use_old=False):
         """ Initialize the parameters of the logistic regression
 
         :type input: theano.tensor.TensorType
@@ -73,6 +73,8 @@ class LogisticRegression(object):
                       which the labels lie
 
         """
+        
+        self.use_old = use_old
 
         # initialize with 0 the weights W as a matrix of shape (n_in, n_out)
         if W:
@@ -128,7 +130,11 @@ class LogisticRegression(object):
         # i.e., the mean log-likelihood across the minibatch.
 
         #return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), T.argmax(y, axis=1)])
-        return -T.mean(T.log(T.sum(self.p_y_given_x * y, axis=1)))
+        
+        if self.use_old:
+            return -T.mean(T.log(T.sum(self.p_y_given_x * y, axis=1)))
+        else:
+            return -T.mean(T.log(T.sum(1 - abs(self.p_y_given_x - y), axis=1)))
 
     def predict(self):
         return self.p_y_given_x
