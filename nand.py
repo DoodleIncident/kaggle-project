@@ -26,7 +26,7 @@ test_labels = labels[N:N+n]
 
 vect = CountVectorizer(min_df=100)
 tfidf = TfidfTransformer()
-clf = OneVsRestClassifier(SGDClassifier(loss='perceptron'))
+clf = OneVsRestClassifier(SGDClassifier(loss='squared_hinge'))
 
 train_docs = vect.fit_transform(train_docs)
 train_docs = tfidf.fit_transform(train_docs)
@@ -49,12 +49,12 @@ predicted = clf.predict(test_docs)
 
 predicted = util.list_of_tuples_to_2d_list(predicted)
 accuracy = util.compute_bin_error(test_labels_bin, predicted, 15)
-accuracy = 100 - ((100*accuracy) / (15*n))
-print accuracy
+accuracy = 1 - (accuracy / (15*n))
+# print accuracy
 
 predicted = np.array(util.denser(predicted, 15))
 error = util.compute_error(test_labels, predicted)
-error = 100 * ((error / (15*n)) ** 0.5)
+error = (error / (15*n)) ** 0.5
 print error
 
-print predicted
+# print predicted

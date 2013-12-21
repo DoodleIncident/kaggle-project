@@ -28,7 +28,6 @@ bootstrap
 0.18677
 177.5
 
-
 linear regression (negative to 0)
 bootstrap
 0.18692

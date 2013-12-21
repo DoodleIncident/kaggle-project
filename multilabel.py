@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.multiclass import OneVsRestClassifier
-from sklearn.svm import LinearSVC
+from sklearn.linear_model import SGDClassifier
 
 with open('train.csv', 'rb') as train,\
 open('test.csv', 'rb') as test:
@@ -26,7 +26,7 @@ test_docs = test_input
 
 vect = CountVectorizer(min_df=100)
 tfidf = TfidfTransformer()
-clf = OneVsRestClassifier(LinearSVC())
+clf = OneVsRestClassifier(SGDClassifier(loss='squared_hinge'))
 
 train_docs = vect.fit_transform(train_docs)
 train_docs = tfidf.fit_transform(train_docs)

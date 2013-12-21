@@ -22,7 +22,7 @@ open('test.csv', 'rb') as test:
 
 
 A = np.zeros((len(test_input), 15))
-offset = 10000
+offset = 30000
 for idx in range(0,len(corpus)/offset):
     train_docs = corpus
     train_labels = util.sparser(labels)
@@ -30,8 +30,7 @@ for idx in range(0,len(corpus)/offset):
 
     vect = CountVectorizer(min_df=100)
     tfidf = TfidfTransformer()
-    #clf = OneVsRestClassifier(LinearSVC())
-    clf = OneVsRestClassifier(SGDClassifier())
+    clf = OneVsRestClassifier(SGDClassifier(loss='squared_hinge'))
 
     train_docs = vect.fit_transform(train_docs[idx*offset:idx*offset+offset])
     train_docs = tfidf.fit_transform(train_docs)

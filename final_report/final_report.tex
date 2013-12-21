@@ -41,7 +41,7 @@ Our team has chosen to solve the 'Partly Sunny with a Chance of Hashtags' challe
 
 The primary objective of the competition is to achieve the lowest root mean square error (RMSE). Our first step in achieving this objective was finding a reasonable way to process the raw tweets and represent the data in an intuitive way. The nature of a tweet can be quite different from one to the next in regards to spelling, grammar, and punctuation, which was a large hurdle to overcome. Initially, we created our own preprocessing stage resulting in around 7,000 unique tokens but ended up using Scikit-Learn's feature extraction module which was much more flexible and ran considerably faster in computing. Second, our task was to decide on appropriate models to fit our data. Given the nature of the labels, we used a different set of machine learning algorithms to classify the three different categories. A multilayer perceptron was used to classify sentiment and time period of a given tweet, given these categories followed a probability distribution. Multilabel classification and linear regression, when combined with bootstrapping, were used to predict the types of weather corresponding to each tweet.
 
-Although the Kaggle competition has come to a close, Kaggle still allows submission and reports a hypothetical rank and RMSE. Using the above mentioned machine learning algorithms, our team placed around 170th place with a RMSE of about 18\%; the top submission achieved an RMSE of 14\%.
+Although the Kaggle competition has come to a close, Kaggle still allows submission and reports a hypothetical rank and RMSE. Using the above mentioned machine learning algorithms, our team placed around 168th place with a RMSE of about 18\%; the top submission achieved an RMSE of 14\%.
 \end{abstract}
 
 \newpage
@@ -80,17 +80,15 @@ Upon re-evaluation of various feature extraction methods, we decided to make use
 
 After performing feature extraction on our data, we fed our preprocessed data matrix to multiple machine learning algorithms. We used separate algorithms for the sentiments/when labels and the kind labels due to the nature of the distribution. As mentioned previously, sentiments and when labels follow a probability distribution while kind labels just need to be between zero and one inclusive.
 
-%charlie's stuff here
 To model the sentiment and time labels, instead of using a black-box library, we implemented our own algorithms in Theano. This allowed us fit the model to the form of our data, and made it possible to test changes made to the algorithm itself, rather than just the hyperparameters of a black-box library.
 
-The first and fastest algorithm implemented was simple logistic regression. Given input x of size n and output y of size m, weight matrix W of size n by m and bias vector b of size m were trained. The prediction function was simply softmax(W*x+b). (Since both the sentiments and times always sum to one, this constraint was enforced by taking the softmax). The cost function was the negative log likelihood of y, given x, and optimization was performed by gradient descent on W and b with respect to this cost. Root Mean Squared Error was also implemented, to cross validate the performance of the algorithm on a holdout validation set.
+The first and fastest algorithm implemented was simple logistic regression. Given input $x$ of size $n$ and output $y$ of size $m$, a weights matrix $W$ of size $n \times m$ and bias vector $b$ of size $m$ were trained. The prediction function was simply $Softmax(W^Tx+b)$. Since both the sentiments and times always sum to one, this constraint was enforced by taking the softmax. The cost function was the negative log-likelihood of $y$, given $x$, and optimization was performed by gradient descent on $W$ and $b$ with respect to this cost. RMSE was also implemented, to cross validate the performance of the algorithm on a holdout validation set.
 
-To get better performance, a hidden layer was added, with its own W matrix and b vector. The activation function and size of the hidden layer could both be parameterized, but the choice of 500 neurons and tanh activation was made without properly testing these hyperparameters. A multilayer perceptron / neural network was then constructed by connecting the output of this hidden layer to the input of the original logistic regression. This led to higher accuracy in all cases, so all further modifications were made to this algorithm.
+To get better performance, a hidden layer was added, with its own $W$ matrix and $b$ vector. The activation function and size of the hidden layer could both be parameterized, but the choice of 500 neurons and hyperbolic tangent activation function was made without properly testing these hyperparameters. A multilayer perceptron/neural network was then constructed by connecting the output of this hidden layer to the input of the original logistic regression. This led to higher accuracy in all cases, so all further modifications were made to this algorithm.
 
-As input to this model, simple document-frequency / bag-of-words vectorization was used on the tweets, with a high-pass filter to exclude terms that didn't appear often enough to be useful. The minimum document frequency for inclusion was the hyperparameter most thoroughly tested. The values 800, 400, 200, and 100 were tested; smaller values exhausted the ram on development machines, and were not tested. Of these, min\_df = 100 gave the best results, cutting 41 thousand words down to just 1113.
+As input to this model, simple document-frequency/bag-of-words vectorization was used on the tweets, with a high-pass filter to exclude terms that didn't appear often enough to be useful.
 
-The last 'hyperparameter' tested is related to the cost of the original logistic regression code, and has the most mysterious behavior. Last-minute inspection of the code revealed a flaw in the neg\_log\_likelihood function. The original code took the element-wise multiplication of the predicted and actual values, and then took the sum across the m dimension to get a real number for each test case. This is a bug; a moment's thought makes it clear that this code rewards the wrong behavior. For example, suppose the actual distribution is “0,0.8,0,0,0.2”. Maximizing according to the original algorithm peaks at “0,1,0,0,0”. Replacing this snippet of code with (1 – abs(actual – predicted)), at the very least, fixes this bug; the maximum of this snippet is to match the training data. Unfortunately, performing this substitution only helps for some of the data. Performance on sentiments increases appreciably when this bug is fixed. When training on the time data, though, the new code trains for 4 steps in the wrong direction and gives up. In consequence, the final codebase includes an explicit override, forcing the old, incorrect algorithm to be used for the time data. It's ugly, but it's better to go with what works, rather than what theoretically should be correct. In addition, this shows how important cross-validation is; accurate performance measurements make it possible to choose the algorithms that give the best results.
-%block
+The last hyperparameter tested is related to the cost of the original logistic regression code, and has the most mysterious behavior. Inspection of the code revealed a flaw in the neg\_log\_likelihood function. The original code took the element-wise multiplication of the predicted and actual values, then took the sum across the $m$ dimensions to get a real number for each test case. This is a bug; a moment's thought makes it clear that this code rewards the wrong behavior. For example, suppose the actual distribution is “0,0.8,0,0,0.2”. Maximizing according to the original algorithm peaks at “0,1,0,0,0”. Replacing this snippet of code with $1 - |actual - predicted|$, at the very least, fixes this bug; the maximum of this snippet is to match the training data. Unfortunately, performing this substitution only helps for some of the data. Performance on sentiments increases appreciably when this bug is fixed. When training on the time data, though, the new code trains for four steps in the wrong direction and gives up. In consequence, the final codebase includes an explicit override, forcing the old, incorrect algorithm to be used for the time data. This shows how important cross validation can be; accurate performance measurements make it possible to choose the algorithms that give the best results.
 
 Multiple algorithms were considered while approaching how to classify the type of weather.
 
@@ -118,15 +116,90 @@ Research done by another group was performed on a much larger set who's goals we
 In the previously mentioned research, groups performed analysis on twitter data sets in the millions of examples and computed on machines in some cases using computing clusters such as Hadoop. Our training set has just under 70,000 examples. In our case, we must keep our features to a resonably low number due to memory constraints other groups are not limited to.
 
 \section{Experimental Results}
-%end up showing may be slightly mutually exclusive
-%we have disproved the effectiveness of multi label and thus shown that even if a tweet talks about rain, knowing that does not help us classify cloudiness for example
+As mentioned above, the multilayer perceptron was the primary algorithm used to predict sentiments and time period of tweets. For the weather types, both a multilabel algorithm with multiple linear classifiers as well as simple linear regression were tested. However, there were a few variables that were finely tuned by holding everything except for it constant, changing the variable to be tested, and performing cross validation by splitting the training data or submitting to Kaggle. These three variables include the combination of minimum and maximum document frequency used for feature extraction, the linear classifier used by the multilabel algorithm, and the number of partitions of the training data used for bootstrapping.
 
-As previously metioned in the section pertaining to the proposed method we have implemented a first iteration of tokenizing our input data. This involved applying a word stemmer from the NLTK library and a spell checker developed by Peter Norvig. A combination of these two methods reduced the token count from a raw 70,000 spanning the entire training set to just over 6,000. However, we must keep in mind that this method also involves throwing away mis-spelt words as well as getting rid of punctuation including emoticons, which may affect the sentiment analysis. After preprocessing the data, we have plugged our data into Theano's logistic regression tutorial in order to familiarize ourselves with the Theano library. We chose to only learn about 'cloudy' tweets, so we used 500 tweets and the corresponding 'cloudy' weather label to predict 'cloudy'-ness in another set of five hundred tweets from the training examples. This is because the test data provided by Kaggle has not been classified. Theano's logistic regression model correctly labeled 480 out of 500 of the test examples from the training data, achieving 96\% accuracy.
+First, we will examine how we set the minimum and maximum document frequency thresholds for feature extraction. This proved to be quite important since changing the these values greatly affected the number of feature vectors and therefore the RMSE of the resulting model's prediction. We hold the algorithms to be constant by using the multilayer perceptron and a multilabel algorithm with a linear support vector classifier. We then perform cross valdiation by training and testing on 70,000 and 7,000 examples respectively of the training data. We range the minimum and maximum document frequency from 1\% to 2\% and 70\% to 90\% respectively of the number of training examples. We also have a base minimum document frequency of 100 since not having this base value produced too many feature vectors resulting in absurdly long runtimes. Please refer to table 1.
 
-We only trained and tested on less than a thousand examples, which resulted in approximately 92\% accuracy, but took way too much time to run. SOME OTHER STUFF.
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{ l | l | l }
+Min Doc Freq & Max Doc Freq & RMSE    \\ \hline
+100          & 30000        & 0.16636 \\
+100          & 56000        & 0.16577 \\
+100          & 64000        & 0.16577 \\
+100          & 72000        & 0.16577 \\
+100          & NaN          & 0.16577 \\
+800          & 30000        & 0.18992 \\
+800          & 56000        & 0.18701 \\
+800          & 64000        & 0.18701 \\
+800          & 72000        & 0.18701 \\
+800          & NaN          & 0.18701 \\
+1200         & 30000        & 0.19601 \\
+1200         & 56000        & 0.19099 \\
+1200         & 64000        & 0.19099 \\
+1200         & 72000        & 0.19099 \\
+1200         & NaN          & 0.19099 \\
+1600         & 30000        & 0.20539 \\
+1600         & 56000        & 0.19632 \\
+1600         & 64000        & 0.19632 \\
+1600         & 72000        & 0.19632 \\
+1600         & NaN          & 0.19632
+\end{tabular}
+\caption{Tuning Minimum/Maximum Document Frequency}
+\end{center}
+\end{table}
+
+The resulting RMSE's from the various combinations of minimum and maximum document frequencies suggests that maximum document frequency can be ignored while a lower minimum document frequency is preferred. Using a minimum document frequency of 100 resulted in 1,113 feature vectors.
+
+As mentioned above, both multilabel classification and linear regression algorithms were used to predict the types of weather. We will examine the effect of bootstrapping both of these algorithms. This was implemented for each algorithm by assigning a batch size for which to train on. After training on each batch of the training data, the resulting model was used to predict the test data. The average of each of these prediction was then used as the final predictions. Please refer to table 2.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{ l | l }
+Batch Size & RMSE    \\ \hline
+500        & 0.23332 \\
+1000       & 0.22908 \\
+5000       & 0.19255 \\
+10000      & 0.18818 \\
+20000      & 0.18566 \\
+30000      & 0.18540 \\
+80000      & 0.18482
+\end{tabular}
+\caption{Tuning Bootstrapping}
+\end{center}
+\end{table}
+
+The resulting RMSE's suggest that as the batch size increases, the RMSE decreases, where the case of only having one batch across the entire training data yields the best RMSE.
+
+Lastly, we will examine which linear classifier provides the best RMSE when using the multilabel algorithm to classify the types of weather. Scikit-Learn's stochastic gradient descent module provides multiple linear models including hinge, log, modified\_huber, squared\_hinge, and perceptron. The hinge loss linear model is simply a support vector machine with a linear kernel. However the squared hinge loss, which is hinge but is quadratically penalized, yielded the lowest RMSE. This test was performed by cross validating, similar to the testing performed to determine the best minimum and maximum document frequency. Please refer to table 3.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{ l | l }
+Linear Classifier & RMSE    \\ \hline
+hinge             & 0.13269 \\
+log               & 0.14897 \\
+perceptron        & 0.16577 \\
+modified\_huber   & 0.13187 \\
+squared\_hinge    & 0.19193
+\end{tabular}
+\caption{Tuning Linear Classifier for Multilabel Algorithm}
+\end{center}
+\end{table}
+
+The following are a few of the most important submissions we had to Kaggle. For each submission, we used a minimum document frequency of 100 as concluded above.
+\begin{itemize}
+	\item Multilayer perceptron for S and W labels, Multilabel classifier with linear support vector classifier for K labels: 0.18482 RMSE (175.5th place)
+	\item Multilayer perceptron for S and W labels, Linear regression for K labels: 0.18217 RMSE (168.5th place)
+	This was the most important submission due to the insight gained about the nature of the tweets. As mentioned above, a multilabel classifer was used under the assumption that weather types may be associated with one another and are not mutually exclusive per tweet. However, this submission showed that performing linear regression individually for each type of weather resulted in the lowest RMSE thus far. This suggests that for example knowing that a tweet is talking about rain does not help us classify cloudiness.
+	\item Multilayer perceptron for S and W labels, Linear regression with bootstrapping for K labels: 0.18692 RMSE (177.5th place)
+	This submission showed the ineffectiveness of bootstrapping.
+	\item Multilayer perceptron (hacked) for S and W labels, Linear regression for K labels: 0.18106 RMSE (168.5th place)
+	This was by far our best submission. It used the explicit override for the flaw in the neg\_log\_likelihood function for the multilayer perceptron as mentioned above.
+\end{itemize}
 
 \section{Conclusion}
-From this challenge, we want to demonstrate that it is possible to classify sentiment, time, and weather conditions with a limited amount of words. Being able to quickly analyze short sentences and small phrases is crucial as the general population is slowly receiving news and information from social medias like Twitter, Facebook, Google+, and etc. The results that we have achieved from Theano's logistic regression thus far is very hopeful. Currently, we have performed a first iteration of tokenizing the raw tweets. We have also been able to apply a machine learning algorithm, namely logistic regression to classify one attribute of the tweets. Moving forward, we wish to analyze the full data set provided by Kaggle. This will entail further tokenizing tricks including PCA and sparse coding as well as the application of more complex algorithms including multilayer perceptrons and GMM.
+Over the course of the Kaggle project, our team has researched and implemented many machine learning algorithms in order to accurately label tweets relating to weather. We had the unique challenge of labeling three different categories of labels each following a different type of distribution. Namely, sentiments and time periods of tweets followed probability distributions, while type of weather labels only had a confidence score between zero and one. Thus, different sets of algorithms were applied to each category. Sentiment and time period of tweets were classified used a multilayer perceptron, which was able to produce a probability distribution for the labels. A multilabel classification algorithm using a squared hinge classifier was used to label the types of weather. This algorithm was chosen based on intuitively understanding the data, however upon further testing, it was shown that a linear regression model was able to yield a lower RMSE. This shows that our hypothesis that weather types may corelate with one another was flawed, and rather, weather types may be more mutually exclusive. It could also mean that we were not provided with an adequate amount of data, however there is no way to test this. This Kaggle project gave us experience with real world machine learning applications. We found that often times the hardest part of applying the various algorithms is being able to efficiently represent the data. We also got experience using differently libraries, namely Theano and Scikit-Learn both of which are widely used. Cross validation and tuning played an important roll in picking hyperparameters such as document frequencies, batch sizes for bootstrapping, and type of classifiers. Ultimately our team, had we been able to submit during the competition, would have placed around 168th place with and RMSE of around 18\%, with the top score being 14\%.
 
 \subsubsection*{References}
 
@@ -146,17 +219,10 @@ From this challenge, we want to demonstrate that it is possible to classify sent
 	[7]Jimmy Lin \& Alek Kolcz, {\it Large-Scale Machine Learning at Twitter}
 
 	[8]Anthony K Jose et al., {\it Twitter Sentiment Analysis}
+
+	[9]Scikit-learn: Machine Learning in Python, Pedregosa et al., JMLR 12, pp. 2825-2830, 2011.
+
+	[10]Our implementation: \url{https://github.com/DoodleIncident/kaggle-project}
 }
-% @article{scikit-learn,
-%  title={Scikit-learn: Machine Learning in {P}ython},
-%  author={Pedregosa, F. and Varoquaux, G. and Gramfort, A. and Michel, V.
-%          and Thirion, B. and Grisel, O. and Blondel, M. and Prettenhofer, P.
-%          and Weiss, R. and Dubourg, V. and Vanderplas, J. and Passos, A. and
-%          Cournapeau, D. and Brucher, M. and Perrot, M. and Duchesnay, E.},
-%  journal={Journal of Machine Learning Research},
-%  volume={12},
-%  pages={2825--2830},
-%  year={2011}
-% }
 
 \end{document}
