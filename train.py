@@ -40,4 +40,4 @@ def load_tweets(dataset):
 
 if __name__ == '__main__':
     mlp.test_mlp(load_data=load_tweets, dataset='sentiments')
-    mlp.test_mlp(load_data=load_tweets, dataset='whens')
+    mlp.test_mlp(load_data=load_tweets, dataset='whens',use_old=True)

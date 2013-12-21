@@ -113,7 +113,7 @@ class MLP(object):
     class).
     """
 
-    def __init__(self, rng, input, n_in, n_hidden, n_out, params=None):
+    def __init__(self, rng, input, n_in, n_hidden, n_out, params=None, use_old=False):
         """Initialize the parameters for the multilayer perceptron
 
         :type rng: numpy.random.RandomState
@@ -155,7 +155,8 @@ class MLP(object):
             input=self.hiddenLayer.output,
             n_in=n_hidden,
             n_out=n_out,
-            W=W_2, b=b_2)
+            W=W_2, b=b_2,
+            use_old=use_old)
 
         # L1 norm ; one regularization option is to enforce L1 norm to
         # be small
@@ -184,7 +185,7 @@ class MLP(object):
 
 def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
              dataset='mnist.pkl.gz', batch_size=20, n_hidden=500,
-             load_data=load_data):
+             load_data=load_data, use_old=False):
     """
     Demonstrate stochastic gradient descent optimization for a multilayer
     perceptron
